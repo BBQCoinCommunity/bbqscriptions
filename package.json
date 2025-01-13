@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "A minter and protocol for inscriptions on BBQCoin",
   "main": "bbqscriptions.js",
-  "author": "c1r2y3p4t5o",
+  "author": "BBQCoinCommunity",
   "license": "MIT",
   "bin": {
     "bbqscriptions": "bbqscriptions.js"
@@ -21,6 +21,6 @@
     "mime-types": "^2.1.35",
     "prettier": "^2.8.3",
     "scryptsy": "2.1.0",
-    "bitcore-lib-bbqcoin": "git+https://github.com/c1r2y3p4t5o/bitcore-lib-bbqcoin.git"
+    "bitcore-lib-bbqcoin": "git+https://github.com/BBQCoinCommunity/bitcore-lib-bbqcoin.git"
   }
 }
