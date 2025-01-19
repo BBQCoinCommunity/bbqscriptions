@@ -311,34 +311,38 @@ async function mint(paramAddress, paramContentTypeOrFilename, paramHexData) {
 
 async function broadcastAll(txs, retry) {
     for (let i = 0; i < txs.length; i++) {
-        console.log(`broadcasting tx ${i + 1} of ${txs.length}`)
-
+        console.log(`broadcasting tx ${i + 1} of ${txs.length}`);
         try {
-            await broadcast(txs[i], retry)
+            await broadcast(txs[i], retry);
         } catch (e) {
-          console.log('broadcast failed', e?.response.data)
-          if (e?.response?.data.error?.message?.includes("bad-txns-inputs-spent") || e?.response?.data.error?.message?.includes("already in block chain")) {
-            console.log('tx already sent, skipping')
-            continue;
-          }
-          console.log('saving pending txs to pending-txs.json')
-          console.log('to reattempt broadcast, re-run the command')
-          fs.writeFileSync('pending-txs.json', JSON.stringify(txs.slice(i).map(tx => tx.toString())))
-          process.exit(1)
+            console.log('broadcast failed:', e?.response?.data || e?.message || 'Unknown error');
+            if (e?.response?.data?.error?.message) {
+                console.log('Error message:', e.response.data.error.message);
+            }
+            if (e?.response?.data?.error?.code) {
+                console.log('Error code:', e.response.data.error.code);
+            }
+            if (e?.response?.data.error?.message?.includes("bad-txns-inputs-spent") || e?.response?.data.error?.message?.includes("already in block chain")) {
+                console.log('tx already sent, skipping');
+                continue;
+            }
+            console.log('saving pending txs to pending-txs.json');
+            console.log('to reattempt broadcast, re-run the command');
+            fs.writeFileSync('pending-txs.json', JSON.stringify(txs.slice(i).map(tx => tx.toString())));
+            process.exit(1);
         }
     }
 
     try {
-      fs.unlinkSync('pending-txs.json')
+        fs.unlinkSync('pending-txs.json');
     } catch (err) {
-      // ignore
+        // ignore
     }
 
     if (txs.length > 1) {
-      console.log('inscription txid:', txs[1].hash)
+        console.log('inscription txid:', txs[1].hash);
     }
 }
-
 
 function bufferToChunk(b, type) {
     b = Buffer.from(b, type)
@@ -429,7 +433,7 @@ function inscribe(wallet, address, contentType, data) {
 
         let p2shOutput = new Transaction.Output({
             script: p2sh,
-            satoshis: 100000
+            satoshis: 1000000
         })
 
         let tx = new Transaction()
@@ -468,7 +472,7 @@ function inscribe(wallet, address, contentType, data) {
 
     let tx = new Transaction()
     tx.addInput(p2shInput)
-    tx.to(address, 100000)
+    tx.to(address, 1000000)
     fund(wallet, tx)
 
     let signature = Transaction.sighash.sign(tx, privateKey, Signature.SIGHASH_ALL, 0, lastLock)
@@ -605,7 +609,7 @@ async function extract(txid) {
 
     let prefix = chunks.shift().buf.toString('utf-8')
     if (prefix != 'ord') {
-        throw new Error('not a doginal')
+        throw new Error('not a bbqnal')
     }
 
     let pieces = chunkToNumber(chunks.shift())
